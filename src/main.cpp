@@ -1,10 +1,11 @@
 #include <iostream>
 #include <cstdio>
 #include "paths.h"
+#include "utils.h"
 
 int main() {
 #ifdef DEBUG
-    std::cout << PROJECT_ROOT_DIR << std::endl;
+    std::cout << "Project root directory is " <<  PROJECT_ROOT_DIR << std::endl;
 #endif
     
     int img_width = 784;
@@ -24,7 +25,10 @@ int main() {
 
             std::cout << ir << " " << ig << " " << ib << '\n';
         }
+        UpdateProgress(1.0f * j / img_height);
     }
+    UpdateProgress(1.0f);
+    std::clog << "Renderer complete: \n";
     fclose(stdout);
     freopen("/dev/tty", "w", stdout);
 
