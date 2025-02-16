@@ -25,9 +25,9 @@ int main() {
 
             std::cout << ir << " " << ig << " " << ib << '\n';
         }
-        UpdateProgress(1.0f * j / img_height);
+        UpdateProgress(1.0 * j / img_height);
     }
-    UpdateProgress(1.0f);
+    UpdateProgress(1.0);
     std::clog << "Renderer complete: \n";
     fclose(stdout);
     freopen("/dev/tty", "w", stdout);

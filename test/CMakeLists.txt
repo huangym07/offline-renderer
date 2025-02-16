@@ -1,0 +1,18 @@
+cmake_minimum_required(VERSION 3.22.1)
+
+project(test)
+set(TEST_PROJECT_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+
+# message("TEST_PROJECT_ROOT_DIR is " ${TEST_PROJECT_ROOT_DIR})
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_FLAGS_DEBUG       "-DDEBUG -g")
+set(CMAKE_CXX_FLAGS_RELEASE     "-O3")
+
+file(GLOB_RECURSE   TEST_SRC_FILES  ${TEST_PROJECT_ROOT_DIR}/src/*.cpp)
+
+message("TEST_SRC_FILES is " ${TEST_SRC_FILES})
+
+add_executable(${PROJECT_NAME} ${TEST_SRC_FILES})
+
+target_include_directories(${PROJECT_NAME} PRIVATE ${TEST_PROJECT_ROOT_DIR}/../include)

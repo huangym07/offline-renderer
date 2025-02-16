@@ -2,7 +2,7 @@
 
 #ifndef __UTILS_H__
 #define __UTILS_H__
-inline void UpdateProgress(float progress) {
+inline void UpdateProgress(double progress) {
     int bar_width = 70;
 
     std::clog << "[";
