@@ -4,95 +4,124 @@
 #include <iostream>
 #include <cmath>
 
-template<class T> 
-class Vec3 {
+template<size_t N, class T> class Vec;
+
+template<size_t N, class T> 
+class Vec {
   public:
-    // data member
-    T e_[3];
+    T e_[N];
 
-    // constructor
-    Vec3() : e_{} {}
-    Vec3(T v) : e_{v, v, v} {}
-    Vec3(T v1, T v2, T v3) : e_{v1, v2, v3} {}
+    Vec() : e_{} {}
+    template<class... Args>
+    Vec(Args... values) : e_{values...} {}
+    Vec(const Vec<N, T>& vec) { for (int i = 0; i < N; i++)  e_[i] = vec[i]; }
 
-    // member access
-    T x() const { return e_[0]; }
-    T y() const { return e_[1]; }
-    T z() const { return e_[2]; }
+    Vec<N, T>& operator= (const Vec<N, T>& vec) { for (int i = 0; i < N; i++) e_[i] = vec[i];  return *this; }
 
-    // index access
-    T operator[] (int index) const { return e_[index]; }
-    T& operator[] (int index) { return e_[index]; }
+    T operator[] (int index) const { static_assert(N > 0, "Vec<N, T> should fulfill N > 0 to call operator[]"); return e_[index]; }
+    T& operator[] (int index) { static_assert(N > 0, "Vec<N, T> should fulfill N > 0 to call operator[]"); return e_[index]; }
 
-    // negative
-    Vec3<T> operator- () { return Vec3<T>(-e_[0], -e_[1], -e_[2]); }
+    T x() { static_assert(N >= 1, "Vec<N, T> should fulfill N >= 1 to call x()"); return e_[0]; };
+    T y() { static_assert(N >= 2, "Vec<N, T> should fulfill N >= 2 to call y()"); return e_[1]; };
+    T z() { static_assert(N >= 3, "Vec<N, T> should fulfill N >= 3 to call z()"); return e_[2]; };
+    T w() { static_assert(N >= 4, "Vec<N, T> should fulfill N >= 4 to call w()"); return e_[3]; };
 
-    // length
+    Vec<N, T> operator- () const { 
+        Vec<N, T> vec;
+
+        for (int i = 0; i < N; i++) vec[i] = -e_[i];
+
+        return vec;
+    }
+
     double Length() const { return sqrt(LengthSquared()); }
-    // length_squared
-    double LengthSquared() const { return e_[0] * e_[0] + e_[1] * e_[1] + e_[2] * e_[2]; }
+    double LengthSquared() const { 
+        double res = 0.0;
+
+        for (int i = 0; i < N; i++) res += e_[i] * e_[i];
+
+        return res;
+    }
 };
 
-// Point3: an alias for Vec3
-template<class T> using Point3 = Vec3<T>;
-
-// <<
-template<class T>
-std::ostream& operator<< (std::ostream& out, const Vec3<T>& v) {
-    out << v.e_[0] << ' ' << v.e_[1] << ' ' << v.e_[2];
+template<size_t N, class T>
+std::ostream& operator<< (std::ostream& out, const Vec<N, T>& vec) {
+    for (int i = 0; i < N; i++) {
+        out << vec.e_[i] << ' ';
+    }
     return out;
 }
 
-// +
-template<class T> 
-Vec3<T> operator+ (const Vec3<T>& v1, const Vec3<T>& v2) {
-    return Vec3<T>(v1.e_[0] + v2.e_[0], v1.e_[1] + v2.e_[1], v1.e_[2] + v2.e_[2]);
+template<size_t N, class T>
+Vec<N, T> operator+ (const Vec<N, T>& vec1, const Vec<N, T>& vec2) {
+    Vec<N, T> ret_vec;
+
+    for (int i = 0; i < N; i++) ret_vec[i] = vec1[i] + vec2[i];
+
+    return ret_vec;
 }
 
-// -
-template<class T>
-Vec3<T> operator- (const Vec3<T>& v1, const Vec3<T>& v2) {
-    return Vec3<T>(v1.e_[0] - v2.e_[0], v1.e_[1] - v2.e_[1], v1.e_[2] - v2.e_[2]);
+template<size_t N, class T>
+Vec<N, T> operator- (const Vec<N, T>& vec1, const Vec<N, T>& vec2) {
+    Vec<N, T> ret_vec;
+
+    for (int i = 0; i < N; i++) ret_vec[i] = vec1[i] - vec2[i];
+
+    return ret_vec;
 }
 
-// * * *
-template<class T>
-Vec3<T> operator* (const Vec3<T>& v1, const Vec3<T>& v2) {
-    return Vec3<T>(v1.e_[0] * v2.e_[0], v1.e_[1] * v2.e_[1], v1.e_[2] * v2.e_[2]);
-}
-template<class T>
-Vec3<T> operator* (const Vec3<T>& v, double t) {
-    return Vec3<T>(v.e_[0] * t, v.e_[1] * t, v.e_[2] * t);
-}
-template<class T>
-Vec3<T> operator* (double t, const Vec3<T>& v) {
-    return Vec3<T>(v.e_[0] * t, v.e_[1] * t, v.e_[2] * t);
+template<size_t N, class T>
+Vec<N, T> operator* (const Vec<N, T>& vec1, const Vec<N, T>& vec2) {
+    Vec<N, T> ret_vec;
+
+    for (int i = 0; i < N; i++) ret_vec[i] = vec1[i] * vec2[i];
+
+    return ret_vec;
 }
 
-// /
-template<class T>
-Vec3<T> operator/ (const Vec3<T>& v, double t) {
-    return v * (1 / t);
+template<size_t N, class T>
+Vec<N, T> operator* (const Vec<N, T>& vec, double t) {
+    Vec<N, T> ret_vec;
+
+    for (int i = 0; i < N; i++) ret_vec[i] = vec[i] * t;
+
+    return ret_vec;
 }
 
-// dot
-template<class T>
-Vec3<T> Dot(const Vec3<T>& v1, const Vec3<T>& v2) {
-    return v1.e_[0] * v2.e_[0] + v1.e_[1] * v2.e_[1] + v1.e_[2] * v2.e_[2];
+template<size_t N, class T>
+Vec<N, T> operator* (double t, const Vec<N, T>& vec) {
+    Vec<N, T> ret_vec;
+
+    for (int i = 0; i < N; i++) ret_vec[i] = vec[i] * t;
+
+    return ret_vec;
 }
 
-// cross
-template<class T>
-Vec3<T> Cross(const Vec3<T>& v1, const Vec3<T>& v2) {
-    return Vec3<T>( v1.e_[1] * v2.e_[2] - v1.e_[2] * v2.e_[1],
-                    v1.e_[2] * v2.e_[0] - v1.e_[0] * v2.e_[2],
-                    v1.e_[0] * v2.e_[1] - v1.e_[1] * v2.e_[0] );
+template<size_t N, class T>
+Vec<N, T> operator/ (const Vec<N, T>& vec, double t) {
+    return (1 / t) * vec;
 }
 
-// unit vector
+template<size_t N, class T>
+double Dot (const Vec<N, T>& vec1, const Vec<N, T>& vec2) {
+    double res = 0; 
+
+    for (int i = 0; i < N; i++) res += vec1[i] * vec2[i];
+
+    return res;
+}
+
 template<class T>
-Vec3<T> UnitVector(const Vec3<T>& v) {
-    return v / v.Length();
+Vec<3, T> Cross (const Vec<3, T>& vec1, const Vec<3, T>& vec2) {
+    return Vec<3, T>(   vec1[1] * vec2[2] - vec1[2] * vec2[1],
+                        vec1[2] * vec2[0] - vec1[0] * vec2[2],
+                        vec1[0] * vec2[1] - vec1[1] * vec2[0]);
+}
+
+template<size_t N, class T>
+Vec<N, T> UnitVector(const Vec<N, T>& vec) {
+    static_assert(N > 0, "Vec<N, T> should fulfill N > 0 to call UnitVector()");
+    return vec / vec.Length();
 }
 
 #endif // __VEC_H__

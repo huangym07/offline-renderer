@@ -15,4 +15,4 @@ message("TEST_SRC_FILES is " ${TEST_SRC_FILES})
 
 add_executable(${PROJECT_NAME} ${TEST_SRC_FILES})
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${TEST_PROJECT_ROOT_DIR}/../include)
+target_include_directories(${PROJECT_NAME} PRIVATE ${TEST_PROJECT_ROOT_DIR}/../include ${TEST_PROJECT_ROOT_DIR}/include)

@@ -2,6 +2,7 @@
 
 #ifndef __UTILS_H__
 #define __UTILS_H__
+
 inline void UpdateProgress(double progress) {
     int bar_width = 70;
 
@@ -15,4 +16,5 @@ inline void UpdateProgress(double progress) {
     std::clog << "] " << (int)(progress * 100) << " %\r";
     std::clog.flush();
 }
+
 #endif // __UTILS_H__
